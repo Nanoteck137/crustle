@@ -7,6 +7,7 @@ import (
 	"path"
 
 	"github.com/kr/pretty"
+	"github.com/nanoteck137/crustle/types"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -96,6 +97,21 @@ func validateConfig(config *Config) {
 }
 
 var config Config
+
+func (c *Config) WorkDir() types.WorkDir {
+	return types.WorkDir(c.DataDir)
+}
+
+func (c *Config) BootstrapDataDir() (types.WorkDir, error) {
+	workDir := c.WorkDir()
+
+	err := os.MkdirAll(workDir.String(), 0755)
+	if err != nil {
+		return workDir, err
+	}
+
+	return workDir, nil
+}
 
 func initConfig() {
 	setDefaults()

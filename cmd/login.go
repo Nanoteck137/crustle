@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"bufio"
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"log"
@@ -11,6 +10,7 @@ import (
 
 	"github.com/kr/pretty"
 	"github.com/nanoteck137/crustle/api"
+	"github.com/nanoteck137/crustle/types"
 	"github.com/spf13/cobra"
 	"golang.org/x/term"
 )
@@ -45,51 +45,76 @@ func ReadCreds() (Creds, error) {
 	}, nil
 }
 
-type ApiError[E any] struct {
-	Code    int    `json:"code"`
-	Message string `json:"message"`
-	Errors  E      `json:"errors,omitempty"`
+func ReadDataFile(workDir types.WorkDir) (types.DataFile, error) {
+	d, err := os.ReadFile(workDir.DataFile())
+	if err != nil {
+		if !os.IsNotExist(err) {
+			return types.DataFile{}, err
+		}
+
+	}
+
+	var data types.DataFile
+	err = json.Unmarshal(d, &data)
+	if err != nil {
+		return types.DataFile{}, err
+	}
+
+	return data, nil
+
 }
 
-func (err *ApiError[E]) Error() string {
-	return err.Message
-}
+func WriteDataFile(workDir types.WorkDir, data types.DataFile) error {
+	d, err := json.Marshal(&data)
+	if err != nil {
+		return err
+	}
 
-type ApiResponse[D any, E any] struct {
-	Status string       `json:"status"`
-	Data   D            `json:"data,omitempty"`
-	Error  *ApiError[E] `json:"error,omitempty"`
+	err = os.WriteFile(workDir.DataFile(), d, 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 var loginCmd = &cobra.Command{
 	Use: "login",
 	Run: func(cmd *cobra.Command, args []string) {
+		workDir, err := config.BootstrapDataDir()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		data, err := ReadDataFile(workDir)
+
+		// TODO(patrik): Check if token is valid
+		if data.Token != "" {
+			log.Println("Warning: Already logged in")
+		}
+
 		creds, err := ReadCreds()
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		a := api.New("http://127.0.0.1:3000")
+		client := api.New("http://127.0.0.1:3000")
 
-		body := api.PostAuthSigninBody{
+		res, err := client.Login(api.PostAuthSigninBody{
 			Username: creds.Username,
 			Password: creds.Password,
-		}
-
-		buf := bytes.Buffer{}
-
-		err = json.NewEncoder(&buf).Encode(&body)
+		})
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		res, err := api.Request[ApiResponse[api.PostAuthSignin, any]](a, "/api/v1/auth/signin", "POST", &buf)
+		fmt.Printf("res.Token: %v\n", res.Token)
+
+		data.Token = res.Token
+
+		err = WriteDataFile(workDir, data)
 		if err != nil {
 			log.Fatal(err)
-		}
-
-		if res.Status == "success" {
-			fmt.Printf("res.Data.Token: %v\n", res.Data.Token)
 		}
 
 		pretty.Println(res)
