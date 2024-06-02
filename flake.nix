@@ -4,9 +4,10 @@
   inputs = {
     nixpkgs.url      = "github:NixOS/nixpkgs/nixos-unstable";
     flake-utils.url  = "github:numtide/flake-utils";
+    tagopus.url      = "github:nanoteck137/tagopus/v0.1.1";
   };
 
-  outputs = { self, nixpkgs, flake-utils, ... }:
+  outputs = { self, nixpkgs, flake-utils, tagopus, ... }:
     flake-utils.lib.eachDefaultSystem (system:
       let
         overlays = [];
@@ -29,6 +30,7 @@
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
             go
+            tagopus.packages.${system}.default
           ];
         };
       }
