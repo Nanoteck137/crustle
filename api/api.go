@@ -25,6 +25,7 @@ type ApiResponse[D any, E any] struct {
 
 type Client struct {
 	addr string
+	token string
 }
 
 func New(addr string) *Client {
@@ -33,12 +34,26 @@ func New(addr string) *Client {
 	}
 }
 
-func (c *Client) Login(body PostAuthSigninBody) (*PostAuthSignin, error) {
-	url := c.addr + "/api/v1/auth/signin"
-	return Request[PostAuthSignin](url, http.MethodPost, body)
+func (c *Client) SetToken(token string) {
+	c.token = token
 }
 
-func Request[D any](url, method string, body any) (*D, error) {
+func (c *Client) Login(body PostAuthSigninBody) (*PostAuthSignin, error) {
+	url := c.addr + "/api/v1/auth/signin"
+	return Request[PostAuthSignin](url, http.MethodPost, c.token, body)
+}
+
+func (c *Client) GetPlaylists() (*GetPlaylists, error) {
+	url := c.addr + "/api/v1/playlists"
+	return Request[GetPlaylists](url, http.MethodGet, c.token, nil)
+}
+
+func (c *Client) GetPlaylistById(id string) (*GetPlaylistById, error) {
+	url := c.addr + "/api/v1/playlists/"+id
+	return Request[GetPlaylistById](url, http.MethodGet, c.token, nil)
+}
+
+func Request[D any](url, method, token string, body any) (*D, error) {
 
 	var r io.Reader
 
@@ -54,6 +69,9 @@ func Request[D any](url, method string, body any) (*D, error) {
 	}
 
 	req, err := http.NewRequest(method, url, r)
+	if token != "" {
+		req.Header.Add("Authorization", "Bearer " + token)
+	}
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
