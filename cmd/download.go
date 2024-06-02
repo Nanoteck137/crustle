@@ -10,6 +10,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/charmbracelet/huh"
 	"github.com/kr/pretty"
 	"github.com/nanoteck137/crustle/api"
 	"github.com/spf13/cobra"
@@ -85,9 +86,21 @@ var downloadPlaylistCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		pretty.Println(res.Playlists)
+		var options []huh.Option[api.Playlist]
 
-		playlist := res.Playlists[0]
+		for _, playlist := range res.Playlists {
+			options = append(options, huh.NewOption(playlist.Name, playlist))
+		}
+
+		var playlist api.Playlist
+		s := huh.NewSelect[api.Playlist]().
+			Title("Testing").
+			Options(options...).
+			Value(&playlist)
+		err = s.Run()
+		if err != nil {
+			log.Fatal(err)
+		}
 
 		p, err := client.GetPlaylistById(playlist.Id)
 		if err != nil {
