@@ -11,7 +11,6 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/huh"
-	"github.com/kr/pretty"
 	"github.com/nanoteck137/crustle/api"
 	"github.com/spf13/cobra"
 )
@@ -106,8 +105,6 @@ var downloadPlaylistCmd = &cobra.Command{
 		if err != nil {
 			log.Fatal(err)
 		}
-
-		pretty.Println(p)
 
 		err = os.MkdirAll(config.DownloadDir, 0755)
 		if err != nil {
