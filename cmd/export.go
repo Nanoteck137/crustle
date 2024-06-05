@@ -73,8 +73,6 @@ var exportCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		fmt.Printf("%v\n", string(b))
-
 		err = os.WriteFile(output, b, 0644)
 		if err != nil {
 			log.Fatal(err)
