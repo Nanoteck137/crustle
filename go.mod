@@ -3,9 +3,11 @@ module github.com/nanoteck137/crustle
 go 1.21.7
 
 require (
+	github.com/charmbracelet/huh v0.4.2
 	github.com/kr/pretty v0.3.1
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/viper v1.18.2
+	golang.org/x/term v0.20.0
 )
 
 require (
@@ -14,7 +16,6 @@ require (
 	github.com/catppuccin/go v0.2.0 // indirect
 	github.com/charmbracelet/bubbles v0.18.0 // indirect
 	github.com/charmbracelet/bubbletea v0.26.3 // indirect
-	github.com/charmbracelet/huh v0.4.2 // indirect
 	github.com/charmbracelet/lipgloss v0.11.0 // indirect
 	github.com/charmbracelet/x/ansi v0.1.1 // indirect
 	github.com/charmbracelet/x/exp/strings v0.0.0-20240524151031-ff83003bf67a // indirect
@@ -52,7 +53,6 @@ require (
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9 // indirect
 	golang.org/x/sync v0.7.0 // indirect
 	golang.org/x/sys v0.20.0 // indirect
-	golang.org/x/term v0.20.0 // indirect
 	golang.org/x/text v0.15.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
