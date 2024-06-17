@@ -44,8 +44,9 @@ func init() {
 }
 
 type Config struct {
-	DataDir string `mapstructure:"data_dir"`
-	DownloadDir string `mapstructure:"download_dir"`
+	ServerAddress string `mapstructure:"server_address"`
+	DataDir       string `mapstructure:"data_dir"`
+	DownloadDir   string `mapstructure:"download_dir"`
 }
 
 func getConfigDir() string {
@@ -75,6 +76,8 @@ func setDefaults() {
 
 	viper.SetDefault("data_dir", getStateDir())
 	viper.BindEnv("download_dir")
+	viper.BindEnv("server_address")
+	viper.SetDefault("filter_file", "filters.toml")
 }
 
 func validateConfig(config *Config) {
@@ -89,6 +92,7 @@ func validateConfig(config *Config) {
 
 	// NOTE(patrik): Has default value, here for completeness
 	// validate(config.ListenAddr == "", "listen_addr needs to be set")
+	validate(config.ServerAddress == "", "server_address needs to be set")
 	validate(config.DataDir == "", "data_dir needs to be set")
 	validate(config.DownloadDir == "", "download_dir needs to be set")
 	// validate(config.LibraryDir == "", "library_dir needs to be set")

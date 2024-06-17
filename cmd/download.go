@@ -198,6 +198,11 @@ func ReadFilters(file string) ([]Filter, error) {
 var downloadFilterCmd = &cobra.Command{
 	Use: "filter",
 	Run: func(cmd *cobra.Command, args []string) {
+		filterFile, err := cmd.Flags().GetString("filter-file")
+		if err != nil {
+			log.Fatal(err)
+		}
+
 		workDir, err := config.BootstrapDataDir()
 		if err != nil {
 			log.Fatal(err)
@@ -205,15 +210,13 @@ var downloadFilterCmd = &cobra.Command{
 
 		data, err := ReadDataFile(workDir)
 
-		client := api.New("http://127.0.0.1:3000")
+		client := api.New(config.ServerAddress)
 		client.SetToken(data.Token)
 
-		filters, err := ReadFilters("filters.toml")
+		filters, err := ReadFilters(filterFile)
 		if err != nil {
 			log.Fatal(err)
 		}
-
-		pretty.Println(filters)
 
 		var options []huh.Option[Filter]
 
@@ -236,10 +239,6 @@ var downloadFilterCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		pretty.Println(res)
-
-		fmt.Printf("len(res.Tracks): %v\n", len(res.Tracks))
-
 		err = os.MkdirAll(config.DownloadDir, 0755)
 		if err != nil {
 			log.Fatal(err)
@@ -248,6 +247,23 @@ var downloadFilterCmd = &cobra.Command{
 		// // TODO(patrik): Sanitize the name
 		name := "Filter - " + filter.Name
 		dst := path.Join(config.DownloadDir, name)
+
+		_, err = os.Stat(dst)
+		if err == nil {
+			val := false
+			s := huh.NewConfirm().
+				Title(fmt.Sprintf("'%s' is not empty\nThis operation will delete the folder", dst)).
+				Value(&val)
+			err = s.Run()
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			err = os.RemoveAll(dst)
+			if err != nil {
+				log.Fatal(err)
+			}
+		} 
 
 		err = os.MkdirAll(dst, 0755)
 		if err != nil {
@@ -305,6 +321,9 @@ var downloadUpdateCmd = &cobra.Command{
 }
 
 func init() {
+	downloadFilterCmd.Flags().StringP("filter-file", "f", "", "Filter file to use")
+	downloadFilterCmd.MarkFlagRequired("filter-file")
+
 	downloadCmd.AddCommand(downloadPlaylistCmd)
 	downloadCmd.AddCommand(downloadFilterCmd)
 	downloadCmd.AddCommand(downloadUpdateCmd)
