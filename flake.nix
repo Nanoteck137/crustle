@@ -21,6 +21,15 @@
           src = ./.;
 
           vendorHash = "sha256-QWidKOG4e+gCw2cQ4nhbgOLyuns+/DlBfAs9VEX69vQ=";
+
+          nativeBuildInputs = [pkgs.makeWrapper];
+
+          postFixup = ''
+            wrapProgram $out/bin/crustle \
+            --set PATH ${pkgs.lib.makeBinPath [
+              tagopus.packages.${system}.default
+            ]}
+          '';
         };
       in
       {
