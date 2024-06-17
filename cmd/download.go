@@ -12,7 +12,6 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/huh"
-	"github.com/kr/pretty"
 	"github.com/nanoteck137/crustle/api"
 	"github.com/pelletier/go-toml/v2"
 	"github.com/spf13/cobra"
