@@ -276,7 +276,7 @@ var downloadFilterCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		for _, track := range res.Tracks {
+		for i, track := range res.Tracks {
 			fmt.Printf("Downloading: %s\n", track.Name)
 			p, err := DownloadTrack(&track, dst)
 			if err != nil {
@@ -291,8 +291,8 @@ var downloadFilterCmd = &cobra.Command{
 			var args []string
 			args = append(args, "--title", track.Name)
 			args = append(args, "--artist", track.ArtistName)
-			args = append(args, "--album", "Testing")
-			args = append(args, "--number", strconv.Itoa(track.Number))
+			args = append(args, "--album", name)
+			args = append(args, "--number", strconv.FormatInt(int64(i), 10))
 			args = append(args, "--image", c)
 			args = append(args, "--remove")
 
