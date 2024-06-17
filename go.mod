@@ -4,6 +4,7 @@ go 1.21.7
 
 require (
 	github.com/charmbracelet/huh v0.4.2
+	github.com/faceair/jio v1.0.1
 	github.com/kr/pretty v0.3.1
 	github.com/spf13/cobra v1.8.0
 	github.com/spf13/viper v1.18.2

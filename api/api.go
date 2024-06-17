@@ -3,8 +3,10 @@ package api
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 )
 
 type ApiError[E any] struct {
@@ -43,6 +45,14 @@ func (c *Client) Login(body PostAuthSigninBody) (*PostAuthSignin, error) {
 	return Request[PostAuthSignin](url, http.MethodPost, c.token, body)
 }
 
+func (c *Client) GetTracks(filter, sort string) (*GetTracks, error) {
+	filter = url.QueryEscape(filter)
+	sort = url.QueryEscape(sort)
+
+	url := c.addr + fmt.Sprintf("/api/v1/tracks?filter=%s&sort=%s", filter, sort)
+	return Request[GetTracks](url, http.MethodGet, c.token, nil)
+}
+
 func (c *Client) GetPlaylists() (*GetPlaylists, error) {
 	url := c.addr + "/api/v1/playlists"
 	return Request[GetPlaylists](url, http.MethodGet, c.token, nil)
@@ -54,7 +64,6 @@ func (c *Client) GetPlaylistById(id string) (*GetPlaylistById, error) {
 }
 
 func Request[D any](url, method, token string, body any) (*D, error) {
-
 	var r io.Reader
 
 	if body != nil {
