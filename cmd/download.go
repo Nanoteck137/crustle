@@ -292,7 +292,7 @@ var downloadFilterCmd = &cobra.Command{
 			args = append(args, "--title", track.Name)
 			args = append(args, "--artist", track.ArtistName)
 			args = append(args, "--album", name)
-			args = append(args, "--number", strconv.FormatInt(int64(i), 10))
+			args = append(args, "--number", strconv.FormatInt(int64(i + 1), 10))
 			args = append(args, "--image", c)
 			args = append(args, "--remove")
 
