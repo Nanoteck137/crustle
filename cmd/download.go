@@ -10,6 +10,7 @@ import (
 	"path"
 	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/charmbracelet/huh"
 	"github.com/nanoteck137/crustle/api"
@@ -279,9 +280,12 @@ var downloadFilterCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
+		wg := sync.WaitGroup{}
+
 		for i, track := range res.Tracks {
 			t := track
 			i := i
+			wg.Add(1)
 			go func() {
 				fmt.Printf("Downloading: %s\n", t.Name)
 				p, err := DownloadTrack(&t, dst)
@@ -311,8 +315,12 @@ var downloadFilterCmd = &cobra.Command{
 				if err != nil {
 					log.Fatal(err)
 				}
+
+				wg.Done()
 			}()
 		}
+
+		wg.Wait()
 
 		err = os.RemoveAll(tmpDir)
 		if err != nil {
