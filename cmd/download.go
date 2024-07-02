@@ -130,34 +130,37 @@ var downloadPlaylistCmd = &cobra.Command{
 		}
 
 		for _, track := range p.Items {
-			p, err := DownloadTrack(&track, dst)
-			if err != nil {
-				log.Fatal(err)
-			}
+			t := track
+			go func() {
+				p, err := DownloadTrack(&t, dst)
+				if err != nil {
+					log.Fatal(err)
+				}
 
-			c, err := DownloadTrackCover(&track, tmpDir)
-			if err != nil {
-				log.Fatal(err)
-			}
+				c, err := DownloadTrackCover(&t, tmpDir)
+				if err != nil {
+					log.Fatal(err)
+				}
 
-			var args []string
+				var args []string
 
-			args = append(args, "--title", track.Name)
-			args = append(args, "--artist", track.ArtistName)
-			args = append(args, "--album", playlist.Name)
-			args = append(args, "--number", strconv.Itoa(track.Number))
-			args = append(args, "--image", c)
-			args = append(args, "--remove")
+				args = append(args, "--title", t.Name)
+				args = append(args, "--artist", t.ArtistName)
+				args = append(args, "--album", playlist.Name)
+				args = append(args, "--number", strconv.Itoa(t.Number))
+				args = append(args, "--image", c)
+				args = append(args, "--remove")
 
-			args = append(args, p)
+				args = append(args, p)
 
-			cmd := exec.Command("tagopus", args...)
-			cmd.Stdout = os.Stdout
-			cmd.Stderr = os.Stderr
-			err = cmd.Run()
-			if err != nil {
-				log.Fatal(err)
-			}
+				cmd := exec.Command("tagopus", args...)
+				cmd.Stdout = os.Stdout
+				cmd.Stderr = os.Stderr
+				err = cmd.Run()
+				if err != nil {
+					log.Fatal(err)
+				}
+			}()
 		}
 
 		err = os.RemoveAll(tmpDir)
@@ -262,7 +265,7 @@ var downloadFilterCmd = &cobra.Command{
 			if err != nil {
 				log.Fatal(err)
 			}
-		} 
+		}
 
 		err = os.MkdirAll(dst, 0755)
 		if err != nil {
@@ -292,7 +295,7 @@ var downloadFilterCmd = &cobra.Command{
 			args = append(args, "--title", track.Name)
 			args = append(args, "--artist", track.ArtistName)
 			args = append(args, "--album", name)
-			args = append(args, "--number", strconv.FormatInt(int64(i + 1), 10))
+			args = append(args, "--number", strconv.FormatInt(int64(i+1), 10))
 			args = append(args, "--image", c)
 			args = append(args, "--remove")
 
