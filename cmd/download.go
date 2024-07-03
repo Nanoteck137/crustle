@@ -10,7 +10,6 @@ import (
 	"path"
 	"strconv"
 	"strings"
-	"sync"
 
 	"github.com/charmbracelet/huh"
 	"github.com/nanoteck137/crustle/api"
