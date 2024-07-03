@@ -131,37 +131,34 @@ var downloadPlaylistCmd = &cobra.Command{
 		}
 
 		for _, track := range p.Items {
-			t := track
-			go func() {
-				p, err := DownloadTrack(&t, dst)
-				if err != nil {
-					log.Fatal(err)
-				}
+			p, err := DownloadTrack(&track, dst)
+			if err != nil {
+				log.Fatal(err)
+			}
 
-				c, err := DownloadTrackCover(&t, tmpDir)
-				if err != nil {
-					log.Fatal(err)
-				}
+			c, err := DownloadTrackCover(&track, tmpDir)
+			if err != nil {
+				log.Fatal(err)
+			}
 
-				var args []string
+			var args []string
 
-				args = append(args, "--title", t.Name)
-				args = append(args, "--artist", t.ArtistName)
-				args = append(args, "--album", playlist.Name)
-				args = append(args, "--number", strconv.Itoa(t.Number))
-				args = append(args, "--image", c)
-				args = append(args, "--remove")
+			args = append(args, "--title", track.Name)
+			args = append(args, "--artist", track.ArtistName)
+			args = append(args, "--album", playlist.Name)
+			args = append(args, "--number", strconv.Itoa(track.Number))
+			args = append(args, "--image", c)
+			args = append(args, "--remove")
 
-				args = append(args, p)
+			args = append(args, p)
 
-				cmd := exec.Command("tagopus", args...)
-				cmd.Stdout = os.Stdout
-				cmd.Stderr = os.Stderr
-				err = cmd.Run()
-				if err != nil {
-					log.Fatal(err)
-				}
-			}()
+			cmd := exec.Command("tagopus", args...)
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+			err = cmd.Run()
+			if err != nil {
+				log.Fatal(err)
+			}
 		}
 
 		err = os.RemoveAll(tmpDir)
@@ -280,48 +277,38 @@ var downloadFilterCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		wg := sync.WaitGroup{}
-
 		for i, track := range res.Tracks {
-			t := track
-			i := i
-			wg.Add(1)
-			go func() {
-				fmt.Printf("Downloading: %s\n", t.Name)
-				p, err := DownloadTrack(&t, dst)
-				if err != nil {
-					log.Fatal(err)
-				}
+			fmt.Printf("Downloading: %s\n", track.Name)
+			p, err := DownloadTrack(&track, dst)
+			if err != nil {
+				log.Fatal(err)
+			}
 
-				c, err := DownloadTrackCover(&t, tmpDir)
-				if err != nil {
-					log.Fatal(err)
-				}
+			c, err := DownloadTrackCover(&track, tmpDir)
+			if err != nil {
+				log.Fatal(err)
+			}
 
-				var args []string
-				args = append(args, "--title", t.Name)
-				args = append(args, "--artist", t.ArtistName)
-				args = append(args, "--album", name)
-				args = append(args, "--number", strconv.FormatInt(int64(i+1), 10))
-				args = append(args, "--image", c)
-				args = append(args, "--remove")
+			var args []string
+			args = append(args, "--title", track.Name)
+			args = append(args, "--artist", track.ArtistName)
+			args = append(args, "--album", name)
+			args = append(args, "--number", strconv.FormatInt(int64(i+1), 10))
+			args = append(args, "--image", c)
+			args = append(args, "--remove")
 
-				args = append(args, p)
+			args = append(args, p)
 
-				cmd := exec.Command("tagopus", args...)
-				cmd.Stdout = os.Stdout
-				cmd.Stderr = os.Stderr
-				err = cmd.Run()
-				if err != nil {
-					log.Fatal(err)
-				}
+			cmd := exec.Command("tagopus", args...)
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+			err = cmd.Run()
+			if err != nil {
+				log.Fatal(err)
+			}
 
-				fmt.Printf("Done Downloading: %s\n", t.Name)
-				wg.Done()
-			}()
+			fmt.Printf("Done Downloading: %s\n", track.Name)
 		}
-
-		wg.Wait()
 
 		err = os.RemoveAll(tmpDir)
 		if err != nil {
