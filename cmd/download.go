@@ -316,6 +316,7 @@ var downloadFilterCmd = &cobra.Command{
 					log.Fatal(err)
 				}
 
+				fmt.Printf("Done Downloading: %s\n", t.Name)
 				wg.Done()
 			}()
 		}
