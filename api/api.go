@@ -78,6 +78,10 @@ func Request[D any](url, method, token string, body any) (*D, error) {
 	}
 
 	req, err := http.NewRequest(method, url, r)
+	if err != nil {
+		return nil, err
+	}
+
 	if token != "" {
 		req.Header.Add("Authorization", "Bearer " + token)
 	}
