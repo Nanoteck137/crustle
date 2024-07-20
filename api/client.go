@@ -204,7 +204,7 @@ func (c *Client) Signup(body PostAuthSignupBody, options Options) (*PostAuthSign
 		Url: url,
 		Method: "POST",
 		Token: c.token,
-		Body: nil,
+		Body: body,
 	}
 	return Request[PostAuthSignup](data)
 }
@@ -220,7 +220,7 @@ func (c *Client) Signin(body PostAuthSigninBody, options Options) (*PostAuthSign
 		Url: url,
 		Method: "POST",
 		Token: c.token,
-		Body: nil,
+		Body: body,
 	}
 	return Request[PostAuthSignin](data)
 }
@@ -268,7 +268,7 @@ func (c *Client) CreatePlaylist(body PostPlaylistBody, options Options) (*PostPl
 		Url: url,
 		Method: "POST",
 		Token: c.token,
-		Body: nil,
+		Body: body,
 	}
 	return Request[PostPlaylist](data)
 }
@@ -300,7 +300,7 @@ func (c *Client) AddItemsToPlaylist(id string, body PostPlaylistItemsByIdBody, o
 		Url: url,
 		Method: "POST",
 		Token: c.token,
-		Body: nil,
+		Body: body,
 	}
 	return Request[any](data)
 }
@@ -316,7 +316,7 @@ func (c *Client) DeletePlaylistItems(id string, body DeletePlaylistItemsByIdBody
 		Url: url,
 		Method: "DELETE",
 		Token: c.token,
-		Body: nil,
+		Body: body,
 	}
 	return Request[any](data)
 }
@@ -332,7 +332,7 @@ func (c *Client) MovePlaylistItem(id string, body PostPlaylistsItemMoveByIdBody,
 		Url: url,
 		Method: "POST",
 		Token: c.token,
-		Body: nil,
+		Body: body,
 	}
 	return Request[any](data)
 }
@@ -364,7 +364,7 @@ func (c *Client) RunSystemSetup(body PostSystemSetupBody, options Options) (*any
 		Url: url,
 		Method: "POST",
 		Token: c.token,
-		Body: nil,
+		Body: body,
 	}
 	return Request[any](data)
 }
