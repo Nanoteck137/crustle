@@ -98,12 +98,13 @@ var loginCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
+		// TODO(patrik): Use config
 		client := api.New("http://127.0.0.1:3000")
 
-		res, err := client.Login(api.PostAuthSigninBody{
+		res, err := client.Signin(api.PostAuthSigninBody{
 			Username: creds.Username,
 			Password: creds.Password,
-		})
+		}, api.Options{})
 		if err != nil {
 			log.Fatal(err)
 		}

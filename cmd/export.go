@@ -30,7 +30,7 @@ var exportCmd = &cobra.Command{
 		client := api.New("http://127.0.0.1:3000")
 		client.SetToken(data.Token)
 
-		res, err := client.GetPlaylists()
+		res, err := client.GetPlaylists(api.Options{})
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -48,7 +48,7 @@ var exportCmd = &cobra.Command{
 
 		exportedPlaylists := make([]Playlist, 0, len(res.Playlists))
 		for _, playlist := range res.Playlists {
-			p, err := client.GetPlaylistById(playlist.Id)
+			p, err := client.GetPlaylistById(playlist.Id, api.Options{})
 			if err != nil {
 				log.Fatal(err)
 			}

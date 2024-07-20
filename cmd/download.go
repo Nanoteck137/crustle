@@ -82,7 +82,7 @@ var downloadPlaylistCmd = &cobra.Command{
 		client := api.New("http://127.0.0.1:3000")
 		client.SetToken(data.Token)
 
-		res, err := client.GetPlaylists()
+		res, err := client.GetPlaylists(api.Options{})
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -103,7 +103,7 @@ var downloadPlaylistCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		p, err := client.GetPlaylistById(playlist.Id)
+		p, err := client.GetPlaylistById(playlist.Id, api.Options{})
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -233,7 +233,12 @@ var downloadFilterCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		res, err := client.GetTracks(filter.Filter, filter.Sort)
+		res, err := client.GetTracks(api.Options{
+			QueryParams: map[string]string{
+				"filter": filter.Filter,
+				"sort": filter.Sort,
+			},
+		})
 		if err != nil {
 			log.Fatal(err)
 		}
