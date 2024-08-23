@@ -28,6 +28,7 @@
             wrapProgram $out/bin/crustle \
             --set PATH ${pkgs.lib.makeBinPath [
               tagopus.packages.${system}.default
+              pkgs.imagemagick
             ]}
           '';
         };
