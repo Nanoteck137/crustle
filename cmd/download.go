@@ -281,35 +281,47 @@ var downloadFilterCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		for _, track := range res.Tracks {
+		for i, track := range res.Tracks {
 			fmt.Printf("Downloading: %s\n", track.Name)
-			_, err := DownloadTrack(&track, dst)
+			p, err := DownloadTrack(&track, dst)
 			if err != nil {
 				log.Fatal(err)
 			}
 
-			_, err = DownloadTrackCover(&track, tmpDir)
+			c, err := DownloadTrackCover(&track, tmpDir)
 			if err != nil {
 				log.Fatal(err)
 			}
 
-			// var args []string
-			// args = append(args, "--title", track.Name)
-			// args = append(args, "--artist", track.ArtistName)
-			// args = append(args, "--album", name)
-			// args = append(args, "--number", strconv.FormatInt(int64(i+1), 10))
-			// args = append(args, "--image", c)
-			// args = append(args, "--remove")
-			//
-			// args = append(args, p)
-			//
-			// cmd := exec.Command("tagopus", args...)
-			// cmd.Stdout = os.Stdout
-			// cmd.Stderr = os.Stderr
-			// err = cmd.Run()
-			// if err != nil {
-			// 	log.Fatal(err)
-			// }
+			// convert cover.png -gravity Center -crop 256x256+0+0 +repage out.png
+
+			out := path.Join(tmpDir, "out.png")
+			// cmd := exec.Command("convert", c, "-gravity", "Center", "-crop", "256x256+0+0", "+repage", out)
+			cmd := exec.Command("convert", c, "-gravity", "Center", "-resize", "256x256", out)
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+			err = cmd.Run()
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			var args []string
+			args = append(args, "--title", track.Name)
+			args = append(args, "--artist", track.ArtistName)
+			args = append(args, "--album", name)
+			args = append(args, "--number", strconv.FormatInt(int64(i+1), 10))
+			args = append(args, "--image", c)
+			args = append(args, "--remove")
+
+			args = append(args, p)
+
+			cmd = exec.Command("tagopus", args...)
+			cmd.Stdout = os.Stdout
+			cmd.Stderr = os.Stderr
+			err = cmd.Run()
+			if err != nil {
+				log.Fatal(err)
+			}
 
 			fmt.Printf("Done Downloading: %s\n", track.Name)
 		}
