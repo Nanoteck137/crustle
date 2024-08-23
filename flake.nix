@@ -28,6 +28,7 @@
             wrapProgram $out/bin/crustle \
             --set PATH ${pkgs.lib.makeBinPath [
               tagopus.packages.${system}.default
+              pkgs.opustags
             ]}
           '';
         };
@@ -41,6 +42,7 @@
             go
             gopls
             tagopus.packages.${system}.default
+            pkgs.opustags
           ];
         };
       }
