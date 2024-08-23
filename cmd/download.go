@@ -281,14 +281,14 @@ var downloadFilterCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		for i, track := range res.Tracks {
+		for _, track := range res.Tracks {
 			fmt.Printf("Downloading: %s\n", track.Name)
-			p, err := DownloadTrack(&track, dst)
+			_, err := DownloadTrack(&track, dst)
 			if err != nil {
 				log.Fatal(err)
 			}
 
-			c, err := DownloadTrackCover(&track, tmpDir)
+			_, err = DownloadTrackCover(&track, tmpDir)
 			if err != nil {
 				log.Fatal(err)
 			}
