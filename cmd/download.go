@@ -293,23 +293,23 @@ var downloadFilterCmd = &cobra.Command{
 				log.Fatal(err)
 			}
 
-			var args []string
-			args = append(args, "--title", track.Name)
-			args = append(args, "--artist", track.ArtistName)
-			args = append(args, "--album", name)
-			args = append(args, "--number", strconv.FormatInt(int64(i+1), 10))
-			args = append(args, "--image", c)
-			args = append(args, "--remove")
-
-			args = append(args, p)
-
-			cmd := exec.Command("tagopus", args...)
-			cmd.Stdout = os.Stdout
-			cmd.Stderr = os.Stderr
-			err = cmd.Run()
-			if err != nil {
-				log.Fatal(err)
-			}
+			// var args []string
+			// args = append(args, "--title", track.Name)
+			// args = append(args, "--artist", track.ArtistName)
+			// args = append(args, "--album", name)
+			// args = append(args, "--number", strconv.FormatInt(int64(i+1), 10))
+			// args = append(args, "--image", c)
+			// args = append(args, "--remove")
+			//
+			// args = append(args, p)
+			//
+			// cmd := exec.Command("tagopus", args...)
+			// cmd.Stdout = os.Stdout
+			// cmd.Stderr = os.Stderr
+			// err = cmd.Run()
+			// if err != nil {
+			// 	log.Fatal(err)
+			// }
 
 			fmt.Printf("Done Downloading: %s\n", track.Name)
 		}
