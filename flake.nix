@@ -39,6 +39,7 @@
         devShells.default = pkgs.mkShell {
           buildInputs = with pkgs; [
             go
+            gopls
             tagopus.packages.${system}.default
           ];
         };
